@@ -1,4 +1,6 @@
-# SIT.Tarkov.Core
+# SIT.Tarkov.SP
+
+## Status - In Progress
 
 ## Summary
 
@@ -8,7 +10,7 @@ This is a port of the Just Emu Tarkov Singleplayer functionality to allow the ga
 Version 5
 
 # How to install BepInEx
-[https://docs.bepinex.dev/articles/user_guide/installation/index.html]https://docs.bepinex.dev/articles/user_guide/installation/index.html
+[https://docs.bepinex.dev/articles/user_guide/installation/index.html](https://docs.bepinex.dev/articles/user_guide/installation/index.html)
 
 ## How to compile? 
 - You will need BepInEx Nuget Feed installed on your PC by running the following command in a terminal. 
