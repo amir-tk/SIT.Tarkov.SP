@@ -21,9 +21,6 @@ namespace SinglePlayerMod.Patches.Progression
         {
             foreach (var method in Constants.Instance.MainApplicationType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
-                //if (method.Name == "method_44") {
-                //    Debug.LogError($"{method.GetParameters().Length} {method.GetParameters()[0].ParameterType.Name} {method.GetParameters()[3].Name} {method.GetParameters()[3].ParameterType.Name}");
-                //}
                 if (method.Name.StartsWith("method") &&
                     method.GetParameters().Length == 6 &&
                     method.GetParameters()[0].ParameterType.Name == "String" &&
