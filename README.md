@@ -12,9 +12,9 @@ Version 5
 
 ## How to compile? 
 You will need BepInEx Nuget Feed installed on your PC by running the following command in a terminal. 
-``
+```
 dotnet new -i BepInEx.Templates --nuget-source https://nuget.bepinex.dev/v3/index.json
-``
+```
 
 ## Install to Tarkov
 BepInEx 5 must be installed and configured first (see How to install BepInEx)
