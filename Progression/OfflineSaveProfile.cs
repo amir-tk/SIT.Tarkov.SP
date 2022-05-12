@@ -27,7 +27,7 @@ namespace SinglePlayerMod.Patches.Progression
                     method.GetParameters()[3].Name == "isLocal" &&
                     method.GetParameters()[3].ParameterType.Name == "Boolean")
                 {
-                    Logger.Log(BepInEx.Logging.LogLevel.Info, method.Name);
+                    //Logger.Log(BepInEx.Logging.LogLevel.Info, method.Name);
                     return method;
                 }
             }

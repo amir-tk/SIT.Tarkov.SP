@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using SinglePlayerMod.Patches.Progression;
 using SinglePlayerMod.Patches.Raid;
-using SIT.Tarkov.SP.Raid;
 
 namespace SIT.Tarkov.SP
 {
@@ -11,12 +10,12 @@ namespace SIT.Tarkov.SP
         private void Awake()
         {
             new OfflineSaveProfile().Enable();
-            new BotTemplateLimit().Enable();
+            //new BotTemplateLimit().Enable();
             new LoadBotDifficultyFromServer().Enable();
             new LoadBotTemplatesFromServer().Enable();
-            new MaxBotCap().Enable();
+            //new MaxBotCap().Enable();
             new RemoveUsedBotProfile().Enable();
-            new SpawnPmc().Enable();
+            //new SpawnPmc().Enable();
             // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
