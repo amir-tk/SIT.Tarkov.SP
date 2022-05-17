@@ -1,23 +1,44 @@
 ﻿using BepInEx;
-using SinglePlayerMod.Patches.Progression;
-using SinglePlayerMod.Patches.Raid;
+using SIT.B.Tarkov.SP.MatchMaker;
+using SIT.Tarkov.SP;
 
-namespace SIT.Tarkov.SP
+namespace SIT.B.Tarkov.SP
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency(SIT.A.Tarkov.Core.PluginInfo.PLUGIN_GUID)]
     public class Plugin : BaseUnityPlugin
     {
         private void Awake()
         {
+            // -------------------------------------
+            // Matchmaker
+            new AutoSetOfflineMatch().Enable();
+            new BringBackInsuranceScreen().Enable();
+            new DisableReadyButtonOnFirstScreen().Enable();
+            new DisableReadyButtonOnSelectLocation().Enable();
+
+            // -------------------------------------
+            // Progression
             new OfflineSaveProfile().Enable();
-            //new BotTemplateLimit().Enable();
+            new ExperienceGainFix().Enable();
+
+            // -------------------------------------
+            // Raid
             new LoadBotDifficultyFromServer().Enable();
-            new LoadBotTemplatesFromServer().Enable();
-            //new MaxBotCap().Enable();
-            new RemoveUsedBotProfile().Enable();
-            //new SpawnPmc().Enable();
-            // Plugin startup logic
+            // !This is broken!
+            //new LoadBotTemplatesFromServer().Enable();
+            //new RemoveUsedBotProfile().Enable();
+            //new BotSettingsLoad().Enable();
+
+
+            // 
+            new ReplaceInMainMenuController().Enable();
+
+
+            Instance = this;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
+
+        public static Plugin Instance;
     }
 }

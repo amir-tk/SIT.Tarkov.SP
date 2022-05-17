@@ -1,12 +1,9 @@
 ﻿using Comfort.Common;
-using JET.Utility;
-using JET.Utility.Patching;
-using SinglePlayerMod.Utility.Progression;
 using SIT.Tarkov.Core;
 using System;
 using System.Reflection;
 
-namespace SinglePlayerMod.Patches.Progression
+namespace SIT.Tarkov.SP
 {
     public class OfflineSaveProfile : ModulePatch
     {
@@ -50,12 +47,13 @@ namespace SinglePlayerMod.Patches.Progression
                 isPlayerScav = true;
             }
 
-            var currentHealth = new PlayerHealth();
-            currentHealth.Energy = 100;
-            currentHealth.Hydration = 100;
+            //var currentHealth = new PlayerHealth();
+            //currentHealth.Energy = 100;
+            //currentHealth.Hydration = 100;
             //var currentHealth = 400;
 
-            SaveProfileProgress(ClientAccesor.BackendUrl, session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
+            //SaveProfileProgress(SIT.Tarkov.Core.PatchConstants.GetBackendUrl(), session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
+            SaveProfileProgress(SIT.Tarkov.Core.PatchConstants.GetBackendUrl(), session.GetPhpSessionId(), result.Value0, profile, null, isPlayerScav);
             //Utility.Progression.SaveLootUtil.SaveProfileProgress(ClientAccesor.BackendUrl, session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
         }
 
@@ -65,7 +63,8 @@ namespace SinglePlayerMod.Patches.Progression
             {
                 exit = exitStatus.ToString().ToLower(),
                 profile = profileData,
-                health = currentHealth,
+                //health = currentHealth,
+                health = null,
                 isPlayerScav = isPlayerScav
             };
 

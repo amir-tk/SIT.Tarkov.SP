@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SinglePlayerMod.Utility.Progression
+namespace SIT.Tarkov.SP
 {
     public class BodyPartHealth
     {

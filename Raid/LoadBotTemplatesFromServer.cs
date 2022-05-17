@@ -9,8 +9,8 @@ using System.Threading;
 //using WaveInfo = GClass984; // not used // search for: Difficulty and chppse gclass with lower number whic hcontains Role and Limit variables
 //using BotsPresets = GClass552; // Search for GetNewProfile
 using BotData = GInterface15; // Search for PrepareToLoadBackend
-using PoolManager = GClass1481; // Search for LoadBundlesAndCreatePools
-using JobPriority = GClass2536; // Search for General
+using PoolManager = GClass1487; // Search for LoadBundlesAndCreatePools
+using JobPriority = GClass2549; // Search for General
 using SIT.Tarkov.Core;
 using System;
 
@@ -38,8 +38,8 @@ namespace SinglePlayerMod.Patches.Raid
 
             //_ = nameof(BotData.PrepareToLoadBackend);
             //_ = nameof(BotsPresets.GetNewProfile);
-            _ = nameof(PoolManager.LoadBundlesAndCreatePools);
-            _ = nameof(JobPriority.General);
+            //_ = nameof(PoolManager.LoadBundlesAndCreatePools);
+            //_ = nameof(JobPriority.General);
 
             _getNewProfileMethod = BotPresentsType
                 .GetMethod("GetNewProfile", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
@@ -86,8 +86,9 @@ namespace SinglePlayerMod.Patches.Raid
                     //(BotDataType)data;
                 }
 
+
                 var source = data.PrepareToLoadBackend(1).ToList();
-                taskAwaiter = PatchConstants.GetClientApp().GetClientBackEndSession().LoadBots(source).ContinueWith(GetFirstResult, taskScheduler);
+                taskAwaiter = SIT.B.Tarkov.SP.PatchConstants.GetClientApp().GetClientBackEndSession().LoadBots(source).ContinueWith(GetFirstResult, taskScheduler);
             }
             else
             {

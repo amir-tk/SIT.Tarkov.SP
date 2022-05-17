@@ -1,7 +1,6 @@
-﻿using JET.Utility;
-using SIT.Tarkov.Core;
+﻿using SIT.Tarkov.Core;
 
-namespace SinglePlayerMod.Utility.Progression
+namespace SIT.Tarkov.SP
 {
 	public class SaveLootUtil
 	{

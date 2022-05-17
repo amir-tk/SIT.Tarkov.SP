@@ -1,6 +1,11 @@
-# SIT.Tarkov.SP
+# SIT.B.Tarkov.SP
 
 ## Status - In Progress
+
+## Disclaimer
+
+This is by no means designed for cheats or illegally downloading the game. This is purely for educational and game modification purposes. You must buy the game to use this. 
+You can obtain it here. [https://www.escapefromtarkov.com](https://www.escapefromtarkov.com)
 
 ## Summary
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using BotData = GInterface15; // find ChooseProfile and get ginterface off that
+//using BotData = GInterface15; // find ChooseProfile and get ginterface off that
 
 namespace SinglePlayerMod.Patches.Raid
 {
@@ -19,7 +19,7 @@ namespace SinglePlayerMod.Patches.Raid
         public RemoveUsedBotProfile()
         {
             // compile-time check
-            _ = nameof(BotData.ChooseProfile);
+            //_ = nameof(BotData.ChooseProfile);
 
             targetInterface = PatchConstants.EftTypes.Single(IsTargetInterface);
             targetType = PatchConstants.EftTypes.Single(IsTargetType);
@@ -52,18 +52,25 @@ namespace SinglePlayerMod.Patches.Raid
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(ref Profile __result, object __instance, BotData data)
+        public static bool PatchPrefix(ref Profile __result, object __instance, object data)
         {
-            var profiles = profilesField(__instance);
+            var botDataType = SIT.B.Tarkov.SP.PatchConstants.BotDataInterfaceType;
+            if (data.GetType() == botDataType)
+            {
+                var profiles = profilesField(__instance);
 
-            if (profiles.Count > 0)
-            {
-                // second parameter makes client remove used profiles
-                __result = data.ChooseProfile(profiles, true);
-            }
-            else
-            {
-                __result = null;
+                if (profiles.Count > 0)
+                {
+                    if (SIT.B.Tarkov.SP.PatchConstants.BotDataInterfaceType_ChooseProfileMethod != null)
+                        __result = (Profile)SIT.B.Tarkov.SP.PatchConstants.BotDataInterfaceType_ChooseProfileMethod.Invoke(data, new object[] { profiles, true });
+                    else
+                        __result = null;
+                    //__result = data.ChooseProfile(profiles, true);
+                }
+                else
+                {
+                    __result = null;
+                }
             }
 
             return false;

@@ -6,40 +6,58 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace SIT.Tarkov.SP.MatchMaker
+namespace SIT.B.Tarkov.SP.MatchMaker
 {
     /// <summary>
     /// This patch sets matches to offline on screen enter also sets other variables directly from server settings
     /// URL called:"/singleplayer/settings/raid/menu"
     /// </summary>
-    class AutoSetOfflineMatch : ModulePatch
+    public class AutoSetOfflineMatch : ModulePatch
     {
         public AutoSetOfflineMatch()
         {
         }
+
+        private static DefaultRaidSettings raidSettings = null;
+
 
         [PatchPostfix]
         public static void PatchPostfix(UpdatableToggle ____offlineModeToggle, UpdatableToggle ____botsEnabledToggle,
             DropDownBox ____aiAmountDropdown, DropDownBox ____aiDifficultyDropdown, UpdatableToggle ____enableBosses,
             UpdatableToggle ____scavWars, UpdatableToggle ____taggedAndCursed)
         {
-            ____offlineModeToggle.isOn = true;
-            ____offlineModeToggle.gameObject.SetActive(false);
-            ____botsEnabledToggle.isOn = true;
 
-            var defaultRaidSettings = Request();
-
-            if (defaultRaidSettings != null)
-            {
-                ____aiAmountDropdown.UpdateValue((int)defaultRaidSettings.AiAmount, false);
-                ____aiDifficultyDropdown.UpdateValue((int)defaultRaidSettings.AiDifficulty, false);
-                ____enableBosses.isOn = defaultRaidSettings.BossEnabled;
-                ____scavWars.isOn = defaultRaidSettings.ScavWars;
-                ____taggedAndCursed.isOn = defaultRaidSettings.TaggedAndCursed;
-            }
+            Logger.LogInfo("AutoSetOfflineMatch.PatchPostfix");
 
             var warningPanel = GameObject.Find("Warning Panel");
             UnityEngine.Object.Destroy(warningPanel);
+
+            // Do a force of these, just encase it breaks
+            ____offlineModeToggle.isOn = true;
+            ____offlineModeToggle.gameObject.SetActive(false);
+            ____offlineModeToggle.interactable = false;
+            ____botsEnabledToggle.isOn = true;
+            ____enableBosses.isOn = true;
+
+            ____aiAmountDropdown.UpdateValue((int)EBotAmount.Medium, false);
+            ____aiDifficultyDropdown.UpdateValue((int)EBotDifficulty.Medium, false);
+
+            Request();
+
+            if (raidSettings != null)
+            {
+                ____aiAmountDropdown.UpdateValue((int)raidSettings.AiAmount, false);
+                ____aiDifficultyDropdown.UpdateValue((int)raidSettings.AiDifficulty, false);
+                ____enableBosses.isOn = raidSettings.BossEnabled;
+                ____scavWars.isOn = raidSettings.ScavWars;
+                ____taggedAndCursed.isOn = raidSettings.TaggedAndCursed;
+            }
+            else
+            {
+                Logger.LogInfo("AutoSetOfflineMatch.PatchPostfix : Raid Settings are Null!");
+            }
+
+          
         }
 
         protected override MethodBase GetTargetMethod()
@@ -47,27 +65,47 @@ namespace SIT.Tarkov.SP.MatchMaker
             return typeof(EFT.UI.Matchmaker.MatchmakerOfflineRaid).GetMethod("Show", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
-        private static DefaultRaidSettings Request()
+
+        public static DefaultRaidSettings Request()
         {
-            var json = new Request(null, ClientAccesor.BackendUrl).GetJson("/singleplayer/settings/raid/menu");
-
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                Debug.LogError("[JET]: Received NULL response for DefaultRaidSettings. Defaulting to fallback.");
-                return null;
-            }
-
-            Debug.LogError("[JET]: Successfully received DefaultRaidSettings");
-
             try
             {
-                return json.ParseJsonTo<DefaultRaidSettings>();
+                //if (raidSettings == null)
+                //{
+                Logger.LogInfo("AutoSetOfflineMatch.Request");
+
+                var json = new Request(null, SIT.Tarkov.Core.PatchConstants.GetBackendUrl()).GetJson("/singleplayer/settings/raid/menu");
+
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    Logger.LogError("Received NULL response for DefaultRaidSettings. Defaulting to fallback.");
+                    return null;
+                }
+
+                try
+                {
+                    raidSettings = json.ParseJsonTo<DefaultRaidSettings>();
+                    Logger.LogInfo("Obtained DefaultRaidSettings from Server");
+                }
+                catch (Exception exception)
+                {
+                    Logger.LogError("Failed to deserialize DefaultRaidSettings from server. Check your gameplay.json config in your server. Defaulting to fallback. Exception: " + exception);
+                    return null;
+                }
+                //}
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Debug.LogError("[JET]: Failed to deserialize DefaultRaidSettings from server. Check your gameplay.json config in your server. Defaulting to fallback. Exception: " + exception);
-                return null;
+                Logger.LogError(e.ToString());
             }
+            finally
+            {
+
+            }
+
+
+            return raidSettings;
+
         }
     }
 

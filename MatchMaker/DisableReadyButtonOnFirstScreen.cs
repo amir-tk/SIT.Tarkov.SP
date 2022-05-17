@@ -1,8 +1,7 @@
-﻿using JET.Utility.Patching;
-using SIT.Tarkov.Core;
+﻿using SIT.Tarkov.Core;
 using System.Reflection;
 
-namespace SIT.Tarkov.SP.MatchMaker
+namespace SIT.B.Tarkov.SP.MatchMaker
 {
     /// <summary>
     /// This Patch Disables the Ready button after you select the location so you will not be jumping to online match by default

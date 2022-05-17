@@ -1,9 +1,8 @@
-﻿using JET.Utility.Patching;
-using SIT.Tarkov.Core;
+﻿using SIT.Tarkov.Core;
 using System.Linq;
 using System.Reflection;
 
-namespace SinglePlayerMod.Patches.Progression
+namespace SIT.Tarkov.SP
 {
     public class ExperienceGainFix : ModulePatch
     {

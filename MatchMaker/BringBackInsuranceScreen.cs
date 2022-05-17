@@ -1,9 +1,8 @@
-﻿using JET.Utility.Patching;
-using SIT.Tarkov.Core;
+﻿using SIT.Tarkov.Core;
 using System.Linq;
 using System.Reflection;
 
-namespace SIT.Tarkov.SP.MatchMaker
+namespace SIT.B.Tarkov.SP.MatchMaker
 {
     public class BringBackInsuranceScreen : ModulePatch
     {

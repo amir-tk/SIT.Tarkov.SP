@@ -1,10 +1,11 @@
 ﻿using EFT;
 using SIT.Tarkov.Core;
+using SIT.B.Tarkov.SP;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace SinglePlayerMod.Patches.Raid
+namespace SIT.B.Tarkov.SP
 {
     class LoadBotDifficultyFromServer : ModulePatch
     {
@@ -17,7 +18,6 @@ namespace SinglePlayerMod.Patches.Raid
             var getBotDifficultyHandler = typeof(EFT.MainApplication).Assembly.GetTypes().Where(type => type.Name.StartsWith("GClass") && type.GetMethod("CheckOnExcude", BindingFlags.Public | BindingFlags.Static) != null).First();
             if (getBotDifficultyHandler == null)
                 return null;
-            //return getBotDifficultyHandler.GetMethod("LoadInternal", BindingFlags.Public | BindingFlags.Static);
             return getBotDifficultyHandler.GetMethod("LoadDifficultyStringInternal", BindingFlags.Public | BindingFlags.Static);
         }
 
@@ -38,7 +38,7 @@ namespace SinglePlayerMod.Patches.Raid
                 return null;
             }
 
-            Debug.LogError("[JET]: Successfully received bot " + role.ToString() + " " + botDifficulty.ToString() + " difficulty data");
+            //Debug.LogError("[JET]: Successfully received bot " + role.ToString() + " " + botDifficulty.ToString() + " difficulty data");
             return json;
         }
     }

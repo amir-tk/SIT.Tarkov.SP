@@ -1,7 +1,7 @@
 ﻿using SIT.Tarkov.Core;
 using System.Reflection;
 
-namespace SIT.Tarkov.SP.MatchMaker
+namespace SIT.B.Tarkov.SP.MatchMaker
 {
     /// <summary>
     /// This patch disables the Ready button when you select the location (game by default enables that button in that case)
