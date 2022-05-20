@@ -12,6 +12,13 @@ namespace SIT.Tarkov.Core
         public string Session;
         public string RemoteEndPoint;
         public bool isUnity;
+
+        public Request()
+        {
+            Session = PatchConstants.GetPHPSESSID();
+            RemoteEndPoint = PatchConstants.GetBackendUrl();
+        }
+
         public Request(string session, string remoteEndPoint, bool isUnity = true)
         {
             Session = session;

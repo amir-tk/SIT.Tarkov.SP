@@ -1,17 +1,25 @@
 ﻿using Comfort.Common;
+using EFT;
+using HarmonyLib;
+using Newtonsoft.Json;
 using SIT.Tarkov.Core;
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace SIT.Tarkov.SP
 {
     public class OfflineSaveProfile : ModulePatch
     {
+        private static readonly JsonConverter[] _defaultJsonConverters;
 
-        public OfflineSaveProfile()
+        static OfflineSaveProfile()
         {
             // compile-time check
             //_ = nameof(ClientMetrics.Metrics);
+
+
+            //_defaultJsonConverters = Traverse.Create(converterClass).Field<JsonConverter[]>("Converters").Value;
         }
 
         protected override MethodBase GetTargetMethod()
@@ -34,7 +42,11 @@ namespace SIT.Tarkov.SP
         }
 
         [PatchPrefix]
-        public static void PatchPrefix(ESideType ___esideType_0, Result<EFT.ExitStatus, TimeSpan, object> result)
+        public static bool PatchPrefix(
+            ref ESideType ___esideType_0
+            , ref Result<EFT.ExitStatus, TimeSpan, object> result)
+        //    [PatchPostfix]
+        //public static void PatchPostfix(ref ESideType ___esideType_0, ref object result)
         {
             Logger.Log(BepInEx.Logging.LogLevel.Info, "OfflineSaveProfile::PatchPrefix");
             var session = ClientAccesor.GetClientApp().GetClientBackEndSession();
@@ -47,38 +59,51 @@ namespace SIT.Tarkov.SP
                 isPlayerScav = true;
             }
 
-            //var currentHealth = new PlayerHealth();
+            var currentHealth = new PlayerHealth();
             //currentHealth.Energy = 100;
             //currentHealth.Hydration = 100;
             //var currentHealth = 400;
 
             //SaveProfileProgress(SIT.Tarkov.Core.PatchConstants.GetBackendUrl(), session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
-            SaveProfileProgress(SIT.Tarkov.Core.PatchConstants.GetBackendUrl(), session.GetPhpSessionId(), result.Value0, profile, null, isPlayerScav);
+
+            var beUrl = SIT.Tarkov.Core.PatchConstants.GetBackendUrl();
+            var sessionId = SIT.Tarkov.Core.PatchConstants.GetPHPSESSID();
+            Logger.LogInfo(beUrl);
+            Logger.LogInfo(sessionId);
+
+            SaveProfileProgress(beUrl
+                , sessionId
+                , EFT.ExitStatus.Survived
+                , profile
+                , currentHealth
+                , isPlayerScav);
             //Utility.Progression.SaveLootUtil.SaveProfileProgress(ClientAccesor.BackendUrl, session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
+            return true;
         }
 
-        public static void SaveProfileProgress(string backendUrl, string session, EFT.ExitStatus exitStatus, EFT.Profile profileData, PlayerHealth currentHealth, bool isPlayerScav)
+        public static void SaveProfileProgress(
+            string backendUrl
+            , string session, EFT.ExitStatus exitStatus, EFT.Profile profileData, PlayerHealth currentHealth, bool isPlayerScav)
         {
             SaveProfileRequest request = new SaveProfileRequest
             {
                 exit = exitStatus.ToString().ToLower(),
                 profile = profileData,
-                //health = currentHealth,
-                health = null,
+                health = currentHealth,
                 isPlayerScav = isPlayerScav
             };
 
-            // ToJson() uses an internal converter which prevents loops and do other internal things
-            Logger.LogInfo("SaveProfileProgress::" + request.ToJson().ToString());
-            new Request(session, backendUrl).PostJson("/raid/profile/save", request.ToJson());
+            var convertedJson = request.SITToJson();
+            new Request(session, backendUrl).PostJson("/raid/profile/save", convertedJson);
+           
         }
 
         public class SaveProfileRequest
         {
-            public string exit = "left";
-            public EFT.Profile profile;
-            public bool isPlayerScav;
-            public PlayerHealth health;
+            public string exit { get; set; }
+            public EFT.Profile profile { get; set; }
+            public bool isPlayerScav { get; set; }
+            public PlayerHealth health { get; set; }
         }
     }
 }

@@ -23,16 +23,20 @@ namespace SIT.B.Tarkov.SP
             new ExperienceGainFix().Enable();
 
             // -------------------------------------
+            // Quests
+            new ItemDroppedAtPlace_Beacon().Enable();
+
+
+            // -------------------------------------
             // Raid
             new LoadBotDifficultyFromServer().Enable();
-            // !This is broken!
             //new LoadBotTemplatesFromServer().Enable();
             //new RemoveUsedBotProfile().Enable();
             //new BotSettingsLoad().Enable();
 
-
             // 
             new ReplaceInMainMenuController().Enable();
+
 
 
             Instance = this;

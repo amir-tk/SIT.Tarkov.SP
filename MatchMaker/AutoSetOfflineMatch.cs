@@ -1,6 +1,7 @@
 ﻿using EFT;
 using EFT.Bots;
 using EFT.UI;
+using Newtonsoft.Json;
 using SIT.Tarkov.Core;
 using System;
 using System.Reflection;
@@ -84,7 +85,7 @@ namespace SIT.B.Tarkov.SP.MatchMaker
 
                 try
                 {
-                    raidSettings = json.ParseJsonTo<DefaultRaidSettings>();
+                    raidSettings = JsonConvert.DeserializeObject<DefaultRaidSettings>(json);
                     Logger.LogInfo("Obtained DefaultRaidSettings from Server");
                 }
                 catch (Exception exception)

@@ -46,10 +46,10 @@ namespace SIT.Tarkov.SP
         // ctor
         private HealthListener()
         {
-            _request = new Request(ClientAccesor.GetClientApp().GetClientBackEndSession().GetPhpSessionId(), SIT.Tarkov.Core.PatchConstants.GetBackendUrl());
+            _request = new Request(PatchConstants.GetPHPSESSID(), SIT.Tarkov.Core.PatchConstants.GetBackendUrl());
             //_simpleTimer = JET.Mono.JET_Instance.Instance.GetOrAddComponent<SimpleTimer>();
             _simpleTimer = Plugin.Instance.GetOrAddComponent<SimpleTimer>();
-            _simpleTimer.syncHealthAction = () => Task.Run(() => _request.PostJson("/player/health/sync", CurrentHealth.ToJson()));
+            _simpleTimer.syncHealthAction = () => Task.Run(() => _request.PostJson("/player/health/sync", CurrentHealth.SITToJson()));
         }
 
         /// <summary>

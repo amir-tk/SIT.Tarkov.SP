@@ -30,7 +30,7 @@ namespace SIT.B.Tarkov.SP
 
         private static string Request(WildSpawnType role, BotDifficulty botDifficulty)
         {
-            var json = new Request(null, PatchConstants.BackendUrl).GetJson("/singleplayer/settings/bot/difficulty/" + role.ToString() + "/" + botDifficulty.ToString());
+            var json = new Request(null, SIT.Tarkov.Core.PatchConstants.GetBackendUrl()).GetJson("/singleplayer/settings/bot/difficulty/" + role.ToString() + "/" + botDifficulty.ToString());
 
             if (string.IsNullOrWhiteSpace(json))
             {

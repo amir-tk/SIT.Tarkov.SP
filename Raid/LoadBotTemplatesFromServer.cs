@@ -8,13 +8,13 @@ using System.Threading;
 
 //using WaveInfo = GClass984; // not used // search for: Difficulty and chppse gclass with lower number whic hcontains Role and Limit variables
 //using BotsPresets = GClass552; // Search for GetNewProfile
-using BotData = GInterface15; // Search for PrepareToLoadBackend
-using PoolManager = GClass1487; // Search for LoadBundlesAndCreatePools
-using JobPriority = GClass2549; // Search for General
+//using BotData = GInterface15; // Search for PrepareToLoadBackend
+//using PoolManager = GClass1487; // Search for LoadBundlesAndCreatePools
+//using JobPriority = GClass2549; // Search for General
 using SIT.Tarkov.Core;
 using System;
 
-namespace SinglePlayerMod.Patches.Raid
+namespace SIT.B.Tarkov.SP
 {
     public class LoadBotTemplatesFromServer : ModulePatch
     {
@@ -27,7 +27,8 @@ namespace SinglePlayerMod.Patches.Raid
         {
             if (BotPresentsType == null)
             {
-                BotPresentsType = PatchConstants.EftTypes.LastOrDefault(x => x.GetMethods().Any(y => y.Name.Contains("GetNewProfile")));
+                BotPresentsType = PatchConstants.EftTypes.LastOrDefault
+                    (x => x.GetMethods().Any(y => y.Name.Contains("GetNewProfile")));
             }
 
             if (BotDataType == null)
@@ -36,13 +37,19 @@ namespace SinglePlayerMod.Patches.Raid
                     => x.IsInterface && x.GetMethods().Any(y => y.Name.Contains("PrepareToLoadBackend")));
             }
 
+            //if (BotPresentsType == null)
+            //{
+            //    BotPresentsType = PatchConstants.EftTypes.LastOrDefault
+            //        (x => x.GetMethods().Any(y => y.Name.Contains("GetNewProfile")));
+            //}
+
             //_ = nameof(BotData.PrepareToLoadBackend);
             //_ = nameof(BotsPresets.GetNewProfile);
             //_ = nameof(PoolManager.LoadBundlesAndCreatePools);
             //_ = nameof(JobPriority.General);
 
-            _getNewProfileMethod = BotPresentsType
-                .GetMethod("GetNewProfile", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+            //_getNewProfileMethod = BotPresentsType
+            //    .GetMethod("GetNewProfile", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         }
 
         protected override MethodBase GetTargetMethod()
@@ -59,92 +66,93 @@ namespace SinglePlayerMod.Patches.Raid
                 && parameters[1].Name == "cancellationToken");
         }
 
-        [PatchPrefix]
-        public static bool PatchPrefix(ref Task<Profile> __result, object __instance, BotData data)
+        //[PatchPrefix]
+        ////public static bool PatchPrefix(ref Task<Profile> __result, object __instance, BotData data)
         //public static bool PatchPrefix(ref Task<Profile> __result, object __instance, object data)
-        {
-            /*
-                in short when client wants new bot and GetNewProfile() return null (if not more available templates or they don't satisfied by Role and Difficulty condition)
-                then client gets new piece of WaveInfo collection (with Limit = 30 by default) and make request to server
-                but use only first value in response (this creates a lot of garbage and cause freezes)
-                after patch we request only 1 template from server
+        //{
+        //    /*
+        //        in short when client wants new bot and GetNewProfile() return null (if not more available templates or they don't satisfied by Role and Difficulty condition)
+        //        then client gets new piece of WaveInfo collection (with Limit = 30 by default) and make request to server
+        //        but use only first value in response (this creates a lot of garbage and cause freezes)
+        //        after patch we request only 1 template from server
 
-                along with other patches this one causes to call data.PrepareToLoadBackend(1) gets the result with required role and difficulty:
-                new[] { new WaveInfo() { Limit = 1, Role = role, Difficulty = difficulty } }
-                then perform request to server and get only first value of resulting single element collection
-            */
-            var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var taskAwaiter = (Task<Profile>)null;
-            var profile = (Profile)_getNewProfileMethod.Invoke(__instance, parameters: new object[] { data });
+        //        along with other patches this one causes to call data.PrepareToLoadBackend(1) gets the result with required role and difficulty:
+        //        new[] { new WaveInfo() { Limit = 1, Role = role, Difficulty = difficulty } }
+        //        then perform request to server and get only first value of resulting single element collection
+        //    */
+        //    var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        //    var taskAwaiter = (Task<Profile>)null;
+        //    var profile = SIT.Tarkov.Core.PatchConstants.DoSafeConversion<Profile>(_getNewProfileMethod.Invoke(__instance, parameters: new object[] { data }));
 
-            if (profile == null)
-            {
-                // load from server
-                Debug.Log("Loading bot profile from server");
-                if(data.GetType().Name == BotDataType.Name)
-                {
-                    //(BotDataType)data;
-                }
+        //    if (profile == null)
+        //    {
+        //        // load from server
+        //        Debug.Log("Loading bot profile from server");
 
+        //        var pptlbMethod = data.GetType().GetMethod("PrepareToLoadBackend", BindingFlags.Instance | BindingFlags.Public);
 
-                var source = data.PrepareToLoadBackend(1).ToList();
-                taskAwaiter = SIT.B.Tarkov.SP.PatchConstants.GetClientApp().GetClientBackEndSession().LoadBots(source).ContinueWith(GetFirstResult, taskScheduler);
-            }
-            else
-            {
-                // return cached profile
-                Debug.Log("Loading bot profile from cache");
-                taskAwaiter = Task.FromResult(profile);
-            }
+        //        //var source = data.PrepareToLoadBackend(1).ToList();
+        //taskAwaiter = SIT.B.Tarkov.SP.PatchConstants.GetClientApp().GetClientBackEndSession().LoadBots(source).ContinueWith(GetFirstResult, taskScheduler);
 
-            // load bundles for bot profile
-            var continuation = new Continuation(taskScheduler);
-            __result = taskAwaiter.ContinueWith(continuation.LoadBundles, taskScheduler).Unwrap();
-            return false;
-        }
+        //        // =====================================================
+        //        // TODO: we havent got this working yet, continue with original
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        // return cached profile
+        //        Debug.Log("Loading bot profile from cache");
+        //        taskAwaiter = Task.FromResult(profile);
+        //    }
 
-        private static Profile GetFirstResult(Task<Profile[]> task)
-        {
-            if (task.IsCompleted && task.Result.Any())
-            {
-                var result = task.Result[0];
-                UnityEngine.Debug.LogError($"Loading bot profile from server. role: {result.Info.Settings.Role} side: {result.Side}");
-                return result;
-            }
+        //    // load bundles for bot profile
+        //    var continuation = new Continuation(taskScheduler);
+        //    __result = taskAwaiter.ContinueWith(continuation.LoadBundles, taskScheduler).Unwrap();
+        //    return false;
+        //}
 
-            return null;
-        }
+        //private static Profile GetFirstResult(Task<Profile[]> task)
+        //{
+        //    if (task.IsCompleted && task.Result.Any())
+        //    {
+        //        var result = task.Result[0];
+        //        UnityEngine.Debug.LogError($"Loading bot profile from server. role: {result.Info.Settings.Role} side: {result.Side}");
+        //        return result;
+        //    }
 
-        private struct Continuation
-        {
-            Profile Profile;
-            TaskScheduler TaskScheduler { get; }
+        //    return null;
+        //}
 
-            public Continuation(TaskScheduler taskScheduler)
-            {
-                Profile = null;
-                TaskScheduler = taskScheduler;
-            }
+        //private struct Continuation
+        //{
+        //    Profile Profile;
+        //    TaskScheduler TaskScheduler { get; }
 
-            public Task<Profile> LoadBundles(Task<Profile> task)
-            {
-                Profile = task.Result;
+        //    public Continuation(TaskScheduler taskScheduler)
+        //    {
+        //        Profile = null;
+        //        TaskScheduler = taskScheduler;
+        //    }
 
-                var loadTask = Singleton<PoolManager>.Instance
-                    .LoadBundlesAndCreatePools(PoolManager.PoolsCategory.Raid,
-                                               PoolManager.AssemblyType.Local,
-                                               Profile.GetAllPrefabPaths(false).ToArray(),
-                                               JobPriority.General,
-                                               null,
-                                               default(CancellationToken));
+        //    public Task<Profile> LoadBundles(Task<Profile> task)
+        //    {
+        //        Profile = task.Result;
 
-                return loadTask.ContinueWith(GetProfile, TaskScheduler);
-            }
+        //        var loadTask = Singleton<PoolManager>.Instance
+        //            .LoadBundlesAndCreatePools(PoolManager.PoolsCategory.Raid,
+        //                                       PoolManager.AssemblyType.Local,
+        //                                       Profile.GetAllPrefabPaths(false).ToArray(),
+        //                                       JobPriority.General,
+        //                                       null,
+        //                                       default(CancellationToken));
 
-            private Profile GetProfile(Task task)
-            {
-                return Profile;
-            }
-        }
+        //        return loadTask.ContinueWith(GetProfile, TaskScheduler);
+        //    }
+
+        //    private Profile GetProfile(Task task)
+        //    {
+        //        return Profile;
+        //    }
+        //}
     }
 }
