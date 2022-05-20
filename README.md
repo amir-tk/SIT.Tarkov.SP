@@ -9,7 +9,8 @@ You can obtain it here. [https://www.escapefromtarkov.com](https://www.escapefro
 
 ## Summary
 
-This is a port of the Just Emu Tarkov Singleplayer functionality to allow the game to run in "Offline" mode and save data using BepInEx
+This is a ~~port~~ **rewrite** of the Just Emu Tarkov Singleplayer functionality to allow the game to run in "Offline" mode and save data using BepInEx. The primary design of this versus 
+others of its kind is that it can be used with ALL versions of EFT.
 
 ## Which version of BepInEx is this built for?
 Version 5
