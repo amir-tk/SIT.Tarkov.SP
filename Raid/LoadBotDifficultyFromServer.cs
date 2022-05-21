@@ -4,6 +4,7 @@ using SIT.B.Tarkov.SP;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace SIT.B.Tarkov.SP
 {
@@ -28,9 +29,15 @@ namespace SIT.B.Tarkov.SP
             return string.IsNullOrWhiteSpace(__result);
         }
 
+        private static Dictionary<string, string> JsonToUrlCache = new Dictionary<string, string>();
+
         private static string Request(WildSpawnType role, BotDifficulty botDifficulty)
         {
-            var json = new Request(null, SIT.Tarkov.Core.PatchConstants.GetBackendUrl()).GetJson("/singleplayer/settings/bot/difficulty/" + role.ToString() + "/" + botDifficulty.ToString());
+            var url = "/singleplayer/settings/bot/difficulty/" + role.ToString() + "/" + botDifficulty.ToString();
+            if(JsonToUrlCache.ContainsKey(url))
+                return JsonToUrlCache[url];
+
+            var json = new Request(PatchConstants.GetPHPSESSID(), PatchConstants.GetBackendUrl()).GetJson(url);
 
             if (string.IsNullOrWhiteSpace(json))
             {
@@ -38,6 +45,7 @@ namespace SIT.B.Tarkov.SP
                 return null;
             }
 
+            JsonToUrlCache.Add(url, json);
             //Debug.LogError("[JET]: Successfully received bot " + role.ToString() + " " + botDifficulty.ToString() + " difficulty data");
             return json;
         }
