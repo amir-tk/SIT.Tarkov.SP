@@ -68,12 +68,12 @@ namespace SIT.Tarkov.SP
 
             var beUrl = SIT.Tarkov.Core.PatchConstants.GetBackendUrl();
             var sessionId = SIT.Tarkov.Core.PatchConstants.GetPHPSESSID();
-            Logger.LogInfo(beUrl);
-            Logger.LogInfo(sessionId);
+            //Logger.LogInfo(beUrl);
+            //Logger.LogInfo(sessionId);
 
             SaveProfileProgress(beUrl
                 , sessionId
-                , EFT.ExitStatus.Survived
+                , result.Value0
                 , profile
                 , currentHealth
                 , isPlayerScav);
