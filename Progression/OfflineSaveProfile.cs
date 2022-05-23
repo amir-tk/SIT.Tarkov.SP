@@ -27,10 +27,13 @@ namespace SIT.Tarkov.SP
             foreach (var method in Constants.Instance.MainApplicationType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
                 if (method.Name.StartsWith("method") &&
-                    method.GetParameters().Length == 6 &&
+                    method.GetParameters().Length >= 6 &&
+                    method.GetParameters()[0].Name == "profileId" &&
                     method.GetParameters()[0].ParameterType.Name == "String" &&
                     method.GetParameters()[3].Name == "isLocal" &&
-                    method.GetParameters()[3].ParameterType.Name == "Boolean")
+                    method.GetParameters()[3].ParameterType.Name == "Boolean"
+                    
+                    )
                 {
                     //Logger.Log(BepInEx.Logging.LogLevel.Info, method.Name);
                     return method;
@@ -44,11 +47,14 @@ namespace SIT.Tarkov.SP
         [PatchPrefix]
         public static bool PatchPrefix(
             ref ESideType ___esideType_0
-            , ref Result<EFT.ExitStatus, TimeSpan, object> result)
+            , ref Result<EFT.ExitStatus, TimeSpan, object> result
+            , ref bool isLocal)
         //    [PatchPostfix]
         //public static void PatchPostfix(ref ESideType ___esideType_0, ref object result)
         {
-            Logger.Log(BepInEx.Logging.LogLevel.Info, "OfflineSaveProfile::PatchPrefix");
+            Logger.LogInfo("OfflineSaveProfile::PatchPrefix");
+            isLocal = false;
+
             var session = ClientAccesor.GetClientApp().GetClientBackEndSession();
             var isPlayerScav = false;
             var profile = session.Profile;
@@ -59,16 +65,18 @@ namespace SIT.Tarkov.SP
                 isPlayerScav = true;
             }
 
-            var currentHealth = new PlayerHealth();
+            var currentHealth = HealthListener.Instance.CurrentHealth;
+            //var currentHealth = new PlayerHealth();
             //currentHealth.Energy = 100;
             //currentHealth.Hydration = 100;
+            //currentHealth.Health = HealthListener.Instance.CurrentHealth.Health;
             //var currentHealth = 400;
 
             //SaveProfileProgress(SIT.Tarkov.Core.PatchConstants.GetBackendUrl(), session.GetPhpSessionId(), result.Value0, profile, currentHealth, isPlayerScav);
 
             var beUrl = SIT.Tarkov.Core.PatchConstants.GetBackendUrl();
             var sessionId = SIT.Tarkov.Core.PatchConstants.GetPHPSESSID();
-            //Logger.LogInfo(beUrl);
+            Logger.LogInfo(beUrl);
             //Logger.LogInfo(sessionId);
 
             SaveProfileProgress(beUrl
@@ -90,6 +98,7 @@ namespace SIT.Tarkov.SP
                 exit = exitStatus.ToString().ToLower(),
                 profile = profileData,
                 health = currentHealth,
+                //health = profileData.Health,
                 isPlayerScav = isPlayerScav
             };
 
@@ -103,7 +112,8 @@ namespace SIT.Tarkov.SP
             public string exit { get; set; }
             public EFT.Profile profile { get; set; }
             public bool isPlayerScav { get; set; }
-            public PlayerHealth health { get; set; }
+            //public PlayerHealth health { get; set; }
+            public object health { get; set; }
         }
     }
 }

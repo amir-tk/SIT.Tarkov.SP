@@ -33,10 +33,27 @@ namespace SIT.Tarkov.SP
         [PatchPostfix]
         public static void PatchPostfix(object __instance)
         {
-            var healthController = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(__instance, "HealthController");// __instance.HealthController;
+            //Logger.LogInfo("ReplaceInMainMenuController.PatchPostfix type");
+            //Logger.LogInfo(__instance.GetType().FullName);
+
+            //var healthController = __instance.GetType().GetProperty("HealthController", BindingFlags.Public | BindingFlags.Instance).GetValue(__instance);
+            var healthController = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(__instance, "HealthController", false);// __instance.HealthController;
             if (healthController != null)
             {
-                Logger.LogInfo("ReplaceInMainMenuController.PatchPostfix.HealthController found!");
+                //Logger.LogInfo("ReplaceInMainMenuController.PatchPostfix.HealthController found!");
+                Logger.LogInfo(healthController.GetType().FullName);
+
+                //Logger.LogInfo("HealthController props!");
+                //foreach(var p in PatchConstants.GetAllPropertiesForObject(healthController))
+                //{
+                //    Logger.LogInfo(p.Name);
+                //}
+                //Logger.LogInfo("HealthController fields!");
+                //foreach (var p in PatchConstants.GetAllFieldsForObject(healthController))
+                //{
+                //    Logger.LogInfo(p.Name);
+                //}
+
                 var listener = HealthListener.Instance;
                 listener.Init(healthController, false);
             }

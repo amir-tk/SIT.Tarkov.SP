@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using SIT.B.Tarkov.SP;
 
@@ -16,8 +18,9 @@ namespace SIT.Tarkov.SP
         private static HealthListener _instance = null;
 
         //private IHealthController _healthController;
-        private object _healthController;
+        public object MyHealthController { get; private set; }
         private bool _inRaid;
+        private bool _runCheck;
         private IDisposable _disposable = null;
         private readonly Request _request;
         private readonly SimpleTimer _simpleTimer;
@@ -48,8 +51,8 @@ namespace SIT.Tarkov.SP
         {
             _request = new Request(PatchConstants.GetPHPSESSID(), SIT.Tarkov.Core.PatchConstants.GetBackendUrl());
             //_simpleTimer = JET.Mono.JET_Instance.Instance.GetOrAddComponent<SimpleTimer>();
-            _simpleTimer = Plugin.Instance.GetOrAddComponent<SimpleTimer>();
-            _simpleTimer.syncHealthAction = () => Task.Run(() => _request.PostJson("/player/health/sync", CurrentHealth.SITToJson()));
+            //_simpleTimer = Plugin.Instance.GetOrAddComponent<SimpleTimer>();
+            //_simpleTimer.syncHealthAction = () => Task.Run(() => _request.PostJson("/player/health/sync", CurrentHealth.SITToJson()));
         }
 
         /// <summary>
@@ -61,59 +64,202 @@ namespace SIT.Tarkov.SP
         /// <param name="inRaid">true - when executed from raid</param>
         public void Init(object healthController, bool inRaid)
         {
+            if (healthController == MyHealthController)
+                return;
+
+            PatchConstants.Logger.LogInfo("HealthListener:Init");
+
             // cleanup
             //if (_disposable != null)
             //    _disposable.Dispose();
 
+
             // init dependencies
-            _healthController = healthController;
+            MyHealthController = healthController;
             _inRaid = inRaid;
 
             //_simpleTimer.isSyncHealthEnabled = !inRaid;
 
-            //CurrentHealth.IsAlive = true;
+            CurrentHealth.IsAlive = true;
 
-            //// init current health
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.Head);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.Chest);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.Stomach);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.LeftArm);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.RightArm);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.LeftLeg);
-            //SetCurrentHealth(_healthController, CurrentHealth.Health, EBodyPart.RightLeg);
+            // init current health
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.Head);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.Chest);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.Stomach);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.LeftArm);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.RightArm);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.LeftLeg);
+            SetCurrentHealth(MyHealthController, CurrentHealth.Health, EBodyPart.RightLeg);
 
-            //var energy = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(_healthController, "Energy");
-            //var hydrydation = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(_healthController, "Hydration");
-            //var currentEnergy = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(energy, "Current");
-            //var currentHydration = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(hydrydation, "Current");
+            SetCurrent("Energy");
+            SetCurrent("Hydration");
+            //SetCurrent("Temperature");
 
-            //CurrentHealth.Energy = _healthController.Energy.Current;
-            //CurrentHealth.Hydration = _healthController.Hydration.Current;
-
-            //// subscribe to events
-            //_healthController.DiedEvent += OnDiedEvent;
-            //_healthController.HealthChangedEvent += OnHealthChangedEvent;
-            //_healthController.EffectAddedEvent += OnEffectAddedEvent;
-            //_healthController.EffectRemovedEvent += OnEffectRemovedEvent;
-            //_healthController.HydrationChangedEvent += OnHydrationChangedEvent;
-            //_healthController.EnergyChangedEvent += OnEnergyChangedEvent;
-
-            //// don't forget to unsubscribe
-            //_disposable = new Disposable(() =>
+            // This is a problem!
+            //var energy = PatchConstants.GetAllPropertiesForObject(MyHealthController).FirstOrDefault(x => x.Name == "Energy").GetValue(MyHealthController);
+            //if (energy == null)
             //{
-            //    _healthController.DiedEvent -= OnDiedEvent;
-            //    _healthController.HealthChangedEvent -= OnHealthChangedEvent;
-            //    _healthController.EffectAddedEvent -= OnEffectAddedEvent;
-            //    _healthController.EffectRemovedEvent -= OnEffectRemovedEvent;
-            //    _healthController.HydrationChangedEvent -= OnHydrationChangedEvent;
-            //    _healthController.EnergyChangedEvent -= OnEnergyChangedEvent;
+            //    return;
+            //}
+
+            //var hydrydation = PatchConstants.GetAllPropertiesForObject(MyHealthController).FirstOrDefault(x => x.Name == "Hydration").GetValue(MyHealthController);
+
+            ////var hydrydation = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(_healthController, "Hydration", false);
+            //if (hydrydation == null)
+            //    return;
+
+            //PatchConstants.Logger.LogInfo("Energy and Hydration found!");
+
+            //var currentEnergy = PatchConstants.GetAllFieldsForObject(energy).FirstOrDefault(x => x.Name == "Current").GetValue(energy);
+            //var currentHydration = PatchConstants.GetAllFieldsForObject(hydrydation).FirstOrDefault(x => x.Name == "Current").GetValue(hydrydation);
+            ////PatchConstants.Logger.LogInfo(currentEnergy);
+            ////PatchConstants.Logger.LogInfo(currentHydration);
+
+            //CurrentHealth.Energy = float.Parse(currentEnergy.ToString());
+            //CurrentHealth.Hydration = float.Parse(currentHydration.ToString());
+
+            ////foreach(var e in _healthController.GetType().GetEvents(BindingFlags.Instance | BindingFlags.Public))
+            ////{
+            ////    PatchConstants.Logger.LogInfo(e.Name);
+            ////}
+            ////var eventHealthChanged = _healthController.GetType().GetEvent("HealthChangedEvent"
+            ////    , System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            ////if (eventHealthChanged != null)
+            ////{
+            ////    PatchConstants.Logger.LogInfo("HealthChangedEvent found!");
+            ////    //eventHealthChanged.AddEventHandler(_healthController, () => { });
+            ////}
+            ////    .AddEventHandler(_healthController, OnHealthChangedEvent);
+            ////PatchConstants.Logger.LogInfo("HealthChangedEvent found!");
+
+            //Task.Run(async () =>
+            //{
+            //    _runCheck = true;
+            //    do
+            //    {
+            //        await Task.Delay(1000);
+
+            //        //var currentEnergy = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<float>(energy, "Current", false);
+            //        //var currentHydration = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<float>(hydrydation, "Current", false);
+            //        var currentEnergy = float.Parse(PatchConstants.GetAllFieldsForObject(energy).FirstOrDefault(x => x.Name == "Current").GetValue(energy).ToString());
+            //        var currentHydration = float.Parse(PatchConstants.GetAllFieldsForObject(hydrydation).FirstOrDefault(x => x.Name == "Current").GetValue(hydrydation).ToString());
+            //    if (CurrentHealth.Energy != currentEnergy)
+            //        {
+            //            CurrentHealth.Energy = currentEnergy;
+            //            CurrentHealth.Hydration = currentHydration;
+
+            //            PatchConstants.Logger.LogInfo("Energy/Hydration Changed");
+            //        }
+            //    } while (_runCheck);
+
             //});
+        }
+
+        private void SetCurrent(string v)
+        {
+            PatchConstants.Logger.LogInfo("HealthListener:SetCurrent:" + v);
+
+            if (PatchConstants.GetAllPropertiesForObject(MyHealthController).Any(x => x.Name == v)) 
+            {
+                var valuestruct = PatchConstants.GetAllPropertiesForObject(MyHealthController).FirstOrDefault(x => x.Name == v).GetValue(MyHealthController);
+                if (valuestruct == null)
+                    return;
+
+                var currentEnergy = PatchConstants.GetAllFieldsForObject(valuestruct).FirstOrDefault(x => x.Name == "Current").GetValue(valuestruct);
+                PatchConstants.Logger.LogInfo(currentEnergy);
+                CurrentHealth.GetType().GetProperty(v).SetValue(CurrentHealth, float.Parse(currentEnergy.ToString()));
+            }
+            else if (PatchConstants.GetAllFieldsForObject(MyHealthController).Any(x => x.Name == v))
+            {
+                var valuestruct = PatchConstants.GetAllFieldsForObject(MyHealthController).FirstOrDefault(x => x.Name == v).GetValue(MyHealthController);
+                if (valuestruct == null)
+                    return;
+
+                var currentEnergy = PatchConstants.GetAllFieldsForObject(valuestruct).FirstOrDefault(x => x.Name == "Current").GetValue(valuestruct);
+                PatchConstants.Logger.LogInfo(currentEnergy);
+
+                CurrentHealth.GetType().GetProperty(v).SetValue(CurrentHealth, float.Parse(currentEnergy.ToString()));
+            }
+
+
+            //var hydrydation = PatchConstants.GetAllPropertiesForObject(MyHealthController).FirstOrDefault(x => x.Name == "Hydration").GetValue(MyHealthController);
+
+            ////var hydrydation = SIT.Tarkov.Core.PatchConstants.GetFieldOrPropertyFromInstance<object>(_healthController, "Hydration", false);
+            //if (hydrydation == null)
+            //    return;
+
+            //PatchConstants.Logger.LogInfo("Energy and Hydration found!");
+
+            //var currentEnergy = PatchConstants.GetAllFieldsForObject(energy).FirstOrDefault(x => x.Name == "Current").GetValue(energy);
+            //var currentHydration = PatchConstants.GetAllFieldsForObject(hydrydation).FirstOrDefault(x => x.Name == "Current").GetValue(hydrydation);
+            ////PatchConstants.Logger.LogInfo(currentEnergy);
+            ////PatchConstants.Logger.LogInfo(currentHydration);
+
+            //CurrentHealth.Energy = float.Parse(currentEnergy.ToString());
         }
 
         private void SetCurrentHealth(object healthController, IReadOnlyDictionary<EBodyPart, BodyPartHealth> dictionary, EBodyPart bodyPart)
         {
+            if (healthController == null)
+                return;
+
+            PatchConstants.Logger.LogInfo("HealthListener:GetBodyPartHealth");
+
+
+            var getbodyparthealthmethod = healthController.GetType().GetMethod("GetBodyPartHealth"
+                , System.Reflection.BindingFlags.Instance
+                | System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.NonPublic
+                | System.Reflection.BindingFlags.FlattenHierarchy
+                );
+            if (getbodyparthealthmethod == null)
+            {
+                PatchConstants.Logger.LogInfo("HealthListener:GetBodyPartHealth not found!");
+                return;
+            }
+
+            //PatchConstants.Logger.LogInfo("GetBodyPartHealth found!");
+
+            var bodyPartHealth = getbodyparthealthmethod.Invoke(healthController, new object[] { bodyPart, false });
+            //PatchConstants.Logger.LogInfo(bodyPart);
+            //PatchConstants.Logger.LogInfo(bodyPartHealth);
             //var bodyPartHealth = healthController.GetBodyPartHealth(bodyPart);
-            //dictionary[bodyPart].Initialize(bodyPartHealth.Current, bodyPartHealth.Maximum);
+
+            //var current = PatchConstants.GetFieldOrPropertyFromInstance<float>(bodyPartHealth, "Current", true);
+            //var maximum = PatchConstants.GetFieldOrPropertyFromInstance<float>(bodyPartHealth, "Maximum", true);
+            var current = PatchConstants.GetAllFieldsForObject(bodyPartHealth).FirstOrDefault(x => x.Name == "Current").GetValue(bodyPartHealth).ToString();
+            var maximum = PatchConstants.GetAllFieldsForObject(bodyPartHealth).FirstOrDefault(x => x.Name == "Maximum").GetValue(bodyPartHealth).ToString();
+            //var maximum = PatchConstants.GetFieldOrPropertyFromInstance<float>(bodyPartHealth, "Maximum", true);
+
+            PatchConstants.Logger.LogInfo($"HealthListener:GetBodyPartHealth:{current}/{maximum}");
+            dictionary[bodyPart].Initialize(float.Parse(current), float.Parse(maximum));
+
+            //Task.Run(async() => {
+            //    _runCheck = true;
+            //    do
+            //    {
+            //        await Task.Delay(1000);
+
+            //        var current = PatchConstants.GetFieldOrPropertyFromInstance<float>(bodyPartHealth, "Current", false);
+            //        var maximum = PatchConstants.GetFieldOrPropertyFromInstance<float>(bodyPartHealth, "Maximum", false);
+            //        if (dictionary.ContainsKey(bodyPart))
+            //        {
+            //            var diff = current += dictionary[bodyPart].Current;
+            //            if (diff != 0
+            //            && current < maximum)
+            //            {
+            //                if (diff + current > maximum)
+            //                    diff = maximum - current;
+
+            //                PatchConstants.Logger.LogInfo("Health Changed on " + bodyPart + " : " + diff);
+            //                CurrentHealth.Health[bodyPart].ChangeHealth(diff);
+            //                _simpleTimer.isHealthSynchronized = false;
+            //            }
+            //        }
+            //    } while (_runCheck);
+
+            //});
+
 
             //// set effects
             //if (healthController.IsBodyPartBroken(bodyPart))
@@ -124,6 +270,8 @@ namespace SIT.Tarkov.SP
             //{
             //    dictionary[bodyPart].RemoveEffect(BodyPartEffect.BreakPart);
             //}
+
+
         }
 
         private void OnDiedEvent(EFT.EDamageType obj)
@@ -134,7 +282,7 @@ namespace SIT.Tarkov.SP
         //public void OnHealthChangedEvent(EBodyPart bodyPart, float diff, StDamage effect)
         public void OnHealthChangedEvent(EBodyPart bodyPart, float diff, object effect)
         {
-            CurrentHealth.Health[bodyPart].ChangeHealth(diff);
+            //CurrentHealth.Health[bodyPart].ChangeHealth(diff);
 
             _simpleTimer.isHealthSynchronized = false;
         }

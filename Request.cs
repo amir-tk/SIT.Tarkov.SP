@@ -34,6 +34,7 @@ namespace SIT.Tarkov.Core
         /// <returns>Stream or null</returns>
         private Stream Send(string url, string method = "GET", string data = null, bool compress = true)
         {
+
             // disable SSL encryption
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -42,7 +43,11 @@ namespace SIT.Tarkov.Core
             var fullUri = url;
             if (!Uri.IsWellFormedUriString(fullUri, UriKind.Absolute))
                 fullUri = RemoteEndPoint + fullUri;
-            WebRequest request = WebRequest.Create(new Uri(fullUri));
+
+            PatchConstants.Logger.LogInfo(fullUri);
+
+            //WebRequest request = WebRequest.Create(new Uri(fullUri));
+            var request = WebRequest.CreateHttp(fullUri);
 
             if (!string.IsNullOrEmpty(Session))
             {

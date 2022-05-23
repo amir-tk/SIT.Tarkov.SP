@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using SIT.B.Tarkov.SP.MatchMaker;
+using SIT.B.Tarkov.SP.Progression;
 using SIT.Tarkov.SP;
+using SIT.Tarkov.SP.Progression;
 
 namespace SIT.B.Tarkov.SP
 {
@@ -35,9 +37,12 @@ namespace SIT.B.Tarkov.SP
             //new BotSettingsLoad().Enable();
 
             // 
-            new ReplaceInMainMenuController().Enable();
+            //new ReplaceInMainMenuController().Enable();
+            new ReplaceInPlayer().Enable();
 
-
+            new ChangeHealthPatch().Enable();
+            new ChangeEnergyPatch().Enable();
+            new ChangeHydrationPatch().Enable();
 
             Instance = this;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
