@@ -67,11 +67,11 @@ namespace SIT.Tarkov.SP
             if (string.IsNullOrEmpty(instanceAccountId))
                 return;
 
-                Logger.LogInfo($"ReplaceInPlayer:PatchPostfix: instanceAccountId {instanceAccountId}");
+                //Logger.LogInfo($"ReplaceInPlayer:PatchPostfix: instanceAccountId {instanceAccountId}");
 
                 if (instanceAccountId != PatchConstants.GetPHPSESSID())
                 {
-                    Logger.LogInfo($"ReplaceInPlayer: {instanceAccountId}!={PatchConstants.GetPHPSESSID()}");
+                    //Logger.LogInfo($"ReplaceInPlayer: {instanceAccountId}!={PatchConstants.GetPHPSESSID()}");
 
                     return;
                 }
@@ -98,14 +98,14 @@ namespace SIT.Tarkov.SP
            
                 if (healthController != null)
                 {
-                    Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found health controller " + healthController.GetType());
+                    //Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found health controller " + healthController.GetType());
                 //listener.Init(healthController, true);
             }
             var healthController2 = __instance.GetType().GetProperty("HealthController", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy).GetValue(__instance);
-            Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found health controller 2" + healthController2.GetType());
+            //Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found health controller 2" + healthController2.GetType());
 
             var activeHealthController = __instance.GetType().GetProperty("ActiveHealthController", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy).GetValue(__instance);
-            Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found active health controller " + activeHealthController.GetType());
+            //Logger.LogInfo("ReplaceInPlayer:PatchPostfix: found active health controller " + activeHealthController.GetType());
             if(activeHealthController != null)
             {
                 listener.Init(healthController, true);
