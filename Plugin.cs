@@ -3,8 +3,9 @@ using SIT.B.Tarkov.SP.MatchMaker;
 using SIT.B.Tarkov.SP.Progression;
 using SIT.Tarkov.SP;
 using SIT.Tarkov.SP.Progression;
+using SIT.Tarkov.SP.Raid.Aki;
 
-namespace SIT.B.Tarkov.SP
+namespace SIT.Tarkov.SP
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency(SIT.A.Tarkov.Core.PluginInfo.PLUGIN_GUID)]
@@ -38,11 +39,29 @@ namespace SIT.B.Tarkov.SP
 
             // 
             //new ReplaceInMainMenuController().Enable();
+
+            // --------------------------------------
+            // Health stuff
             new ReplaceInPlayer().Enable();
 
             new ChangeHealthPatch().Enable();
             new ChangeEnergyPatch().Enable();
             new ChangeHydrationPatch().Enable();
+
+            // --------------------------------------
+            // Bots
+            new IsEnemyPatch().Enable();
+            new IsEnemyBossPatch().Enable();
+
+
+            // --------------------------------------
+            // Air Drop
+            new AirdropBoxPatch().Enable();
+            new AirdropPatch().Enable();
+
+
+
+
 
             Instance = this;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");

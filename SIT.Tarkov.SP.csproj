@@ -7,7 +7,7 @@
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
-    <RootNamespace>SIT.B.Tarkov.SP</RootNamespace>
+    <RootNamespace>SIT.Tarkov.SP</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
