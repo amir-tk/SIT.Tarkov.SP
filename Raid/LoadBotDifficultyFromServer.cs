@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace SIT.B.Tarkov.SP
+namespace SIT.Tarkov.SP
 {
     class LoadBotDifficultyFromServer : ModulePatch
     {

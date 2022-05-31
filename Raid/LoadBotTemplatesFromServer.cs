@@ -14,20 +14,20 @@ using System.Threading;
 using SIT.Tarkov.Core;
 using System;
 
-namespace SIT.B.Tarkov.SP
+namespace SIT.Tarkov.SP
 {
     public class LoadBotTemplatesFromServer : ModulePatch
     {
         private static MethodInfo _getNewProfileMethod;
 
-        public static Type BotPresentsType { get; set; }
+        public static Type BotPresetsType { get; set; }
         public static Type BotDataType { get; set; }
 
         public LoadBotTemplatesFromServer()
         {
-            if (BotPresentsType == null)
+            if (BotPresetsType == null)
             {
-                BotPresentsType = PatchConstants.EftTypes.LastOrDefault
+                BotPresetsType = PatchConstants.EftTypes.LastOrDefault
                     (x => x.GetMethods().Any(y => y.Name.Contains("GetNewProfile")));
             }
 
@@ -54,7 +54,7 @@ namespace SIT.B.Tarkov.SP
 
         protected override MethodBase GetTargetMethod()
         {
-            return BotPresentsType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+            return BotPresetsType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .Single(x => IsTargetMethod(x));
         }
 
