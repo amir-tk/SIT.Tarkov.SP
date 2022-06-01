@@ -5,11 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using EFT;
 using System.Reflection;
-using System;
 using UnityEngine;
 using Comfort.Common;
-using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using SIT.Tarkov.Core;
 
@@ -58,7 +55,7 @@ namespace SIT.Tarkov.SP.Raid.Aki
         [PatchPrefix]
         public static bool PatchPreFix(Vector3 point, ref float distance, RaycastHit raycastHit, LayerMask mask)
         {
-            Logger.LogInfo("AirdropBoxPatch:PatchPreFix");
+            //Logger.LogInfo("AirdropBoxPatch:PatchPreFix");
 
             if (height == 0)
             {
@@ -87,7 +84,7 @@ namespace SIT.Tarkov.SP.Raid.Aki
         [PatchPostfix]
         public static void PatchPostFix()
         {
-            Logger.LogInfo("AirdropPatch:PatchPostFix");
+            //Logger.LogInfo("AirdropPatch:PatchPostFix");
 
             gameWorld = Singleton<GameWorld>.Instance;
             points = LocationScene.GetAll<AirdropPoint>().Any();
