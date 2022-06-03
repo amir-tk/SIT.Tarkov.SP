@@ -64,8 +64,12 @@ namespace SIT.Tarkov.SP.Raid.Aki
             }
 
             var bosses = new Enum[] { WildSpawnType.bossTagilla, WildSpawnType.bossBully, WildSpawnType.bossGluhar, WildSpawnType.bossKilla, WildSpawnType.bossKojaniy, WildSpawnType.bossSanitar, WildSpawnType.bossTagilla };
-            if ((bosses.Contains(botType) || botType == WildSpawnType.pmcBot || botType.ToString().StartsWith("follower"))
-                && side != EPlayerSide.Savage)
+            if (
+                (bosses.Contains(botType) 
+                || botType == WildSpawnType.pmcBot 
+                || botType.ToString().StartsWith("follower"))
+                //&& side != EPlayerSide.Savage
+                )
             {
                 _addEnemy.Invoke(__instance, new object[] { player });
                 return false; // skip original

@@ -25,8 +25,9 @@ namespace SIT.Tarkov.SP.Progression
         {
             if (__instance == HealthListener.Instance.MyHealthController)
             {
-                Logger.LogInfo("ChangeEnergyPatch:PatchPostfix:Change on my Health Controller: " + value);
-                HealthListener.Instance.CurrentHealth.Energy += value;
+                //Logger.LogInfo("ChangeEnergyPatch:PatchPostfix:Change on my Health Controller: " + value);
+                if(HealthListener.Instance.CurrentHealth.Energy + value > 0)
+                    HealthListener.Instance.CurrentHealth.Energy += value;
             }
         }
     }

@@ -26,7 +26,7 @@ namespace SIT.Tarkov.SP.Raid.Aki
         {
             AirDropLogicClassType = PatchConstants.EftTypes.Single(x
                 => x.GetMethod("ParachuteFadeCoroutine", BindingFlags.Public | BindingFlags.Instance) != null);
-            Logger.LogInfo(GetType().Name + ":" + AirDropLogicClassType.Name);
+            //Logger.LogInfo(GetType().Name + ":" + AirDropLogicClassType.Name);
         }
 
         public static int height = 0;

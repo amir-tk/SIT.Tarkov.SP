@@ -25,8 +25,9 @@ namespace SIT.Tarkov.SP.Progression
         {
             if (__instance == HealthListener.Instance.MyHealthController)
             {
-                Logger.LogInfo("ChangeHydration:PatchPostfix:Change on my Health Controller: " + value);
-                HealthListener.Instance.CurrentHealth.Hydration += value;
+                //Logger.LogInfo("ChangeHydration:PatchPostfix:Change on my Health Controller: " + value);
+                if(HealthListener.Instance.CurrentHealth.Hydration + value > 0)
+                    HealthListener.Instance.CurrentHealth.Hydration += value;
             }
         }
     }

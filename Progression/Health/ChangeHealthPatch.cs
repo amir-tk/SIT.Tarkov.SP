@@ -27,7 +27,7 @@ namespace SIT.B.Tarkov.SP.Progression
         {
             if (__instance == HealthListener.Instance.MyHealthController)
             {
-                Logger.LogInfo("ChangeHealthPatch:PatchPostfix:Change on my Health Controller: " + value);
+                //Logger.LogInfo("ChangeHealthPatch:PatchPostfix:Change on my Health Controller: " + value);
                 HealthListener.Instance.CurrentHealth.Health[bodyPart].ChangeHealth(value);
                 //Logger.LogInfo("ChangeHealthPatch:PatchPostfix:Type:" + __instance.GetType());
             }

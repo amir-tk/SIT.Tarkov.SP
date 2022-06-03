@@ -3,6 +3,7 @@ using SIT.B.Tarkov.SP.MatchMaker;
 using SIT.B.Tarkov.SP.Progression;
 using SIT.Tarkov.SP;
 using SIT.Tarkov.SP.Progression;
+using SIT.Tarkov.SP.Raid;
 using SIT.Tarkov.SP.Raid.Aki;
 
 namespace SIT.Tarkov.SP
@@ -33,7 +34,6 @@ namespace SIT.Tarkov.SP
             // -------------------------------------
             // Raid
             new LoadBotDifficultyFromServer().Enable();
-            //new LoadBotTemplatesFromServer().Enable();
             //new RemoveUsedBotProfile().Enable();
             //new BotSettingsLoad().Enable();
 
@@ -49,18 +49,19 @@ namespace SIT.Tarkov.SP
             new ChangeHydrationPatch().Enable();
 
             // --------------------------------------
-            // Bots
-            new IsEnemyPatch().Enable();
-            new IsEnemyBossPatch().Enable();
-
-
-            // --------------------------------------
             // Air Drop
             new AirdropBoxPatch().Enable();
             new AirdropPatch().Enable();
 
 
+            // --------------------------------------
+            // Bots
+            new IsEnemyPatch().Enable();
+            new IsEnemyBossPatch().Enable();
+            //new CheckAndAddEnemyPatch().Enable();
 
+            //new RemoveUsedBotProfile().Enable();
+            //new BotSpawnPatch().Enable();
 
 
             Instance = this;
