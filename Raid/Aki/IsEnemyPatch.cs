@@ -47,6 +47,8 @@ namespace SIT.Tarkov.SP.Raid.Aki
             return _targetType.GetMethod("IsEnemy");
         }
 
+        private static bool DumpedProperties;
+
         /// <summary>
         /// IsEnemy()
         /// Goal: if bot not found in enemy dictionary, we manually choose if they're an enemy or friend
@@ -55,20 +57,51 @@ namespace SIT.Tarkov.SP.Raid.Aki
         [PatchPrefix]
         private static bool PatchPrefix(ref bool __result, object __instance, object requester)
         {
+            var otherPerson = requester;
             //Logger.LogInfo($"IsEnemyPatch:PatchPrefix:__instance:Type: {__instance.GetType()}");
             //Logger.LogInfo($"IsEnemyPatch:PatchPrefix:requester:Type: {requester.GetType()}");
 
+            WildSpawnType myWildSpawnType = (WildSpawnType)__instance.GetType().GetProperty("InitialBotType", BindingFlags.Public | BindingFlags.Instance).GetValue(__instance);
             var side = (EPlayerSide)_sideField.GetValue(__instance);
             var enemies = _enemiesField.GetValue(__instance);
-            //foreach(var f in requester.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            //{
-            //    Logger.LogInfo($"{f}");
-            //}
+            if (!DumpedProperties)
+            {
+                DumpedProperties = true;
+                //foreach (var f in requester.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                //{
+                //    Logger.LogInfo($"IsEnemyPatch:PropTests:{f}");
+                //}
+            }
+
+            WildSpawnType otherPersonWildSpawnType = WildSpawnType.pmcBot;
             var requesterSideObj = requester.GetType().GetProperty("Side", BindingFlags.Public | BindingFlags.Instance).GetValue(requester);
             var requesterSide = (EPlayerSide)requesterSideObj;
             var requesterIsAI = (bool)requester.GetType().GetProperty("IsAI", BindingFlags.Public | BindingFlags.Instance).GetValue(requester);
+            if (requesterIsAI)
+            {
+                var requesterProfile = (EFT.Profile)requester.GetType().GetProperty("Profile", BindingFlags.Public | BindingFlags.Instance).GetValue(requester);
+                if (requesterProfile != null)
+                {
+                    if(requesterProfile.Info != null && requesterProfile.Info.Settings != null)
+                    {
+                        otherPersonWildSpawnType = requesterProfile.Info.Settings.Role;
+                    }
+                    //var requesterProfileInfo = PatchConstants.GetFieldOrPropertyFromInstance<object>(requesterProfile, "Info", false);
+                    //if (requesterProfileInfo != null)
+                    //{
+                    //    var requesterProfileInfoSettings = PatchConstants.GetFieldOrPropertyFromInstance<object>(requesterProfileInfo, "Settings", false);
+                    //    if (requesterProfileInfoSettings != null)
+                    //        otherPersonWildSpawnType = (WildSpawnType)PatchConstants.GetFieldFromType(requesterProfileInfoSettings.GetType(), "Role").GetValue(requesterProfileInfoSettings);
+                    //}
+                }
+            }
 
-            var result = side != requesterSide || (!requesterIsAI); // default side that doesn't equal mine OR is Player = kill
+            // If PMC Bot / Player / A different Side , then KILL
+            var result = side != requesterSide 
+                || (!requesterIsAI) 
+                || otherPersonWildSpawnType == WildSpawnType.pmcBot
+                || myWildSpawnType != otherPersonWildSpawnType; // default side that doesn't equal mine OR is Player = kill
+            //var result = side != requesterSide; // default side that doesn't equal mine OR is Player = kill
 
             __result = result;
 
