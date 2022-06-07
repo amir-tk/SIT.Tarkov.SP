@@ -9,11 +9,13 @@ using UnityEngine;
 using Comfort.Common;
 using Newtonsoft.Json;
 using SIT.Tarkov.Core;
+using SIT.A.Tarkov.Core.Spawners.Grenades;
 
 /***
  * Full Credit for this patch goes to SPT-Aki team
  * Original Source is found here - https://dev.sp-tarkov.com/SPT-AKI/Modules
  * Paulov. Made changes to have better reflection, less hardcoding and use my own Requesting
+ * Paulov. Have also added some nifty smoke grenades to show where it is!
  */
 
 namespace SIT.Tarkov.SP.Raid.Aki
@@ -310,7 +312,8 @@ namespace SIT.Tarkov.SP.Raid.Aki
 
             var sound = plane.GetComponentInChildren<AudioSource>();
             sound.volume = config.planeVolume;
-            sound.dopplerLevel = 0;
+            sound.spatialBlend = 0.9f;
+            sound.dopplerLevel = 0.1f;
             sound.Play();
         }
 
@@ -326,12 +329,11 @@ namespace SIT.Tarkov.SP.Raid.Aki
 
             var airdropLogic = Activator.CreateInstance(AirdropBoxPatch.AirDropLogicClassType);
             boxEnabled = true;
-            //box.SetLogic(new AirdropLogic2Class());
-            //box.SetLogic(airdropLogic);
             box.GetType().GetMethod("SetLogic").Invoke(box, new object[] { airdropLogic });
             box.ReturnToPool();
             box.TakeFromPool();
             box.Init(boxObjId, boxPosition, Vector3.zero);
+            //box.GetOrAddComponent<SmokeGrenadeSpawner>();
         }
 
         public void PlanePositionGen()
