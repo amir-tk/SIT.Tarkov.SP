@@ -22,7 +22,7 @@ namespace SIT.Tarkov.SP.Raid
         public RemoveUsedBotProfile()
         {
             BotDataInterfaceType = PatchConstants.EftTypes.Single(x => x.IsInterface && PatchConstants.GetAllMethodsForType(x).Any(y => y.Name == "ChooseProfile"));
-            BotDataChooseProfileMethod = PatchConstants.GetAllMethodsForType(typeof(RemoveUsedBotProfile)).Single(x => x.Name == "ChooseProfile");
+            BotDataChooseProfileMethod = PatchConstants.GetAllMethodsForType(BotDataInterfaceType).Single(x => x.Name == "ChooseProfile");
             // compile-time check
             //_ = nameof(BotData.ChooseProfile);
 
@@ -70,15 +70,15 @@ namespace SIT.Tarkov.SP.Raid
                         __result = (Profile)BotDataChooseProfileMethod.Invoke(data, new object[] { profiles, true });
                     else
                         __result = null;
-                    //__result = data.ChooseProfile(profiles, true);
                 }
                 else
                 {
                     __result = null;
                 }
+                return false;
             }
+            return true;
 
-            return false;
         }
     }
 }

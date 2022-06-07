@@ -59,8 +59,7 @@ namespace SIT.Tarkov.SP
             new IsEnemyPatch().Enable();
             new IsEnemyBossPatch().Enable();
             //new CheckAndAddEnemyPatch().Enable();
-
-            //new RemoveUsedBotProfile().Enable();
+            new RemoveUsedBotProfile().Enable();
             //new BotSpawnPatch().Enable();
 
 
