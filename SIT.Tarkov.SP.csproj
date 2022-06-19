@@ -22,10 +22,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="ScavMode\" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <ProjectReference Include="..\SIT.Tarkov.Core\SIT.A.Tarkov.Core.csproj" />
   </ItemGroup>
   

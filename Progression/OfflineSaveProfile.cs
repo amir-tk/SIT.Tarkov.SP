@@ -11,8 +11,6 @@ namespace SIT.Tarkov.SP
 {
     public class OfflineSaveProfile : ModulePatch
     {
-        private static readonly JsonConverter[] _defaultJsonConverters;
-
         static OfflineSaveProfile()
         {
             // compile-time check

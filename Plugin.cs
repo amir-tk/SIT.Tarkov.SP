@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using SIT.B.Tarkov.SP.MatchMaker;
 using SIT.B.Tarkov.SP.Progression;
+using SIT.Tarkov.Core.SP;
 using SIT.Tarkov.SP;
 using SIT.Tarkov.SP.Progression;
 using SIT.Tarkov.SP.Raid;
@@ -56,10 +57,9 @@ namespace SIT.Tarkov.SP
 
             // --------------------------------------
             // Bots
-            new IsEnemyPatch().Enable();
-            new IsEnemyBossPatch().Enable();
+            //new IsEnemyPatch().Enable();
+            //new IsEnemyBossPatch().Enable();
             //new CheckAndAddEnemyPatch().Enable();
-            new RemoveUsedBotProfile().Enable();
             //new BotSpawnPatch().Enable();
 
 

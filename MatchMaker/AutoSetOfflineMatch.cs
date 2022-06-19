@@ -36,6 +36,7 @@ namespace SIT.B.Tarkov.SP.MatchMaker
             // Do a force of these, just encase it breaks
             ____offlineModeToggle.isOn = true;
             ____offlineModeToggle.gameObject.SetActive(false);
+            ____offlineModeToggle.enabled = false;
             ____offlineModeToggle.interactable = false;
             ____botsEnabledToggle.isOn = true;
             ____enableBosses.isOn = true;
@@ -52,6 +53,11 @@ namespace SIT.B.Tarkov.SP.MatchMaker
                 ____enableBosses.isOn = raidSettings.BossEnabled;
                 ____scavWars.isOn = raidSettings.ScavWars;
                 ____taggedAndCursed.isOn = raidSettings.TaggedAndCursed;
+
+
+                ____offlineModeToggle.gameObject.SetActive(false);
+                ____offlineModeToggle.enabled = false;
+                ____offlineModeToggle.interactable = false;
             }
             else
             {

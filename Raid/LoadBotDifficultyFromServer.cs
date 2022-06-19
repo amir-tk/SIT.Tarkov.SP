@@ -41,7 +41,7 @@ namespace SIT.Tarkov.SP
 
             if (string.IsNullOrWhiteSpace(json))
             {
-                Debug.LogError("[JET]: Received bot " + role.ToString() + " " + botDifficulty.ToString() + " difficulty data is NULL, using fallback");
+                Debug.LogError("Received bot " + role.ToString() + " " + botDifficulty.ToString() + " difficulty data is NULL, using fallback");
                 return null;
             }
 

@@ -50,11 +50,12 @@ namespace SIT.Tarkov.SP.Raid.Aki
         [PatchPrefix]
         private static bool PatchPrefix(object __instance, object player, bool ignoreAI = false)
         {
-            //var side = (EPlayerSide)_sideField.GetValue(__instance);
-            var botType = (WildSpawnType)_spawnTypeField.GetValue(__instance);
-            //var enemies = (Dictionary<IAIDetails, BotSettingsClass>)_enemiesField.GetValue(__instance);
+            //ignoreAI = false;
+            var side = (EPlayerSide)_sideField.GetValue(__instance);
+            //var botType = (WildSpawnType)_spawnTypeField.GetValue(__instance);
+            ////var enemies = (Dictionary<IAIDetails, BotSettingsClass>)_enemiesField.GetValue(__instance);
 
-            var side = (EPlayerSide)player.GetType().GetProperty("Side", BindingFlags.Instance | BindingFlags.Public).GetValue(player);
+            //var side = (EPlayerSide)player.GetType().GetProperty("Side", BindingFlags.Instance | BindingFlags.Public).GetValue(player);
             var healthController = player.GetType().GetProperty("HealthController", BindingFlags.Instance | BindingFlags.Public).GetValue(player);
             var isAlive = (bool)healthController.GetType().GetProperty("IsAlive", BindingFlags.Instance | BindingFlags.Public).GetValue(healthController);
 
@@ -63,20 +64,21 @@ namespace SIT.Tarkov.SP.Raid.Aki
                 return false; // skip original
             }
 
-            var bosses = new Enum[] { WildSpawnType.bossTagilla, WildSpawnType.bossBully, WildSpawnType.bossGluhar, WildSpawnType.bossKilla, WildSpawnType.bossKojaniy, WildSpawnType.bossSanitar, WildSpawnType.bossTagilla };
-            if (
-                (bosses.Contains(botType) 
-                || botType == WildSpawnType.pmcBot 
-                || botType.ToString().StartsWith("follower"))
-                //&& side != EPlayerSide.Savage
-                )
-            {
-                _addEnemy.Invoke(__instance, new object[] { player });
-                return false; // skip original
-            }
+            var bosses = new Enum[] { WildSpawnType.bossTagilla, WildSpawnType.pmcBot, WildSpawnType.bossBully, WildSpawnType.bossGluhar, WildSpawnType.bossKilla, WildSpawnType.bossKojaniy, WildSpawnType.bossSanitar, WildSpawnType.bossTagilla };
+            //if (
+            //    (bosses.Contains(botType) 
+            //    || botType == WildSpawnType.pmcBot 
+            //    || botType.ToString().StartsWith("follower"))
+            //    //&& side != EPlayerSide.Savage
+            //    )
+            //{
+            Logger.LogInfo("IsEnemyBossPatch:PatchPrefix:Adding enemy!");
+            _addEnemy.Invoke(__instance, new object[] { player });
+            //    return false; // skip original
+            //}
 
             // perform original
-            return true;
+            return false;
         }
     }
 }
