@@ -5,7 +5,6 @@ using SIT.Tarkov.Core.SP;
 using SIT.Tarkov.SP;
 using SIT.Tarkov.SP.Progression;
 using SIT.Tarkov.SP.Raid;
-using SIT.Tarkov.SP.Raid.Aki;
 
 namespace SIT.Tarkov.SP
 {
@@ -51,8 +50,8 @@ namespace SIT.Tarkov.SP
 
             // --------------------------------------
             // Air Drop
-            new AirdropBoxPatch().Enable();
-            new AirdropPatch().Enable();
+            //new AirdropBoxPatch().Enable();
+            //new AirdropPatch().Enable();
 
 
             // --------------------------------------
