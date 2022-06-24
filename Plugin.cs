@@ -16,37 +16,37 @@ namespace SIT.Tarkov.SP
         {
             // -------------------------------------
             // Matchmaker
-            new AutoSetOfflineMatch().Enable();
-            new BringBackInsuranceScreen().Enable();
-            new DisableReadyButtonOnFirstScreen().Enable();
-            new DisableReadyButtonOnSelectLocation().Enable();
+            //new AutoSetOfflineMatch().Enable();
+            //new BringBackInsuranceScreen().Enable();
+            //new DisableReadyButtonOnFirstScreen().Enable();
+            //new DisableReadyButtonOnSelectLocation().Enable();
 
-            // -------------------------------------
-            // Progression
-            new OfflineSaveProfile().Enable();
-            new ExperienceGainFix().Enable();
+            //// -------------------------------------
+            //// Progression
+            //new OfflineSaveProfile().Enable();
+            //new ExperienceGainFix().Enable();
 
-            // -------------------------------------
-            // Quests
-            new ItemDroppedAtPlace_Beacon().Enable();
+            //// -------------------------------------
+            //// Quests
+            //new ItemDroppedAtPlace_Beacon().Enable();
 
 
-            // -------------------------------------
-            // Raid
-            new LoadBotDifficultyFromServer().Enable();
-            //new RemoveUsedBotProfile().Enable();
-            //new BotSettingsLoad().Enable();
+            //// -------------------------------------
+            //// Raid
+            //new LoadBotDifficultyFromServer().Enable();
+            ////new RemoveUsedBotProfile().Enable();
+            ////new BotSettingsLoad().Enable();
 
-            // 
-            //new ReplaceInMainMenuController().Enable();
+            //// 
+            ////new ReplaceInMainMenuController().Enable();
 
-            // --------------------------------------
-            // Health stuff
-            new ReplaceInPlayer().Enable();
+            //// --------------------------------------
+            //// Health stuff
+            //new ReplaceInPlayer().Enable();
 
-            new ChangeHealthPatch().Enable();
-            new ChangeEnergyPatch().Enable();
-            new ChangeHydrationPatch().Enable();
+            //new ChangeHealthPatch().Enable();
+            //new ChangeEnergyPatch().Enable();
+            //new ChangeHydrationPatch().Enable();
 
             // --------------------------------------
             // Air Drop
